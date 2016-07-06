@@ -1,0 +1,11 @@
+character {
+  display:inline-block;
+}
+
+character-name {
+  display:block;
+}
+
+img {
+  max-width: 300px;
+}

@@ -45,10 +45,54 @@ var marvel = marvelFactory({
 // Make a call using the api
 marvel('/characters').then(function(json) { 
   json.data.results.map(function(character){
+    // DESIRED STRUCTURE:
+    //
+    // <characters>
+    //   <character>
+    //     <character-name><a href="https://www.google.com/#q=******">3D-Man</a></character-name>
+    //     <img src="thumbnail.jpg" />
+    //   </character>
+    //   <character>
+    //     <character-name>Ajax</character-name>
+    //     <img src="thumbnail.jpg" />
+    //   </character>
+    //   <character>
+    //     <character-name>Astrelle</character-name>
+    //     <img src="thumbnail.jpg" />
+    //   </character>
+    // </characters>
+
+    // START HERE WITH BUILDING THE STRUCTURE
+
+    // <character></character>
+    var characterContainer = document.createElement('character');
+
+     // Any operations specific to this character
     var imgPath = character.thumbnail.path + '.' + character.thumbnail.extension;
+    var name = character.name;
+
     var img = document.createElement('img'); // Create an element node
     img.setAttribute('src', imgPath); // Set some properties on the node
-    document.querySelector('body').appendChild(img); // Attached the node to the document
-  }); 
+
+    var nameTag = document.createElement('character-name'); // <character-name>
+
+    var nameTextNode = document.createTextNode(name); // 3D-Man
+    var nameLinkNode = document.createElement('a'); // <a>
+    nameLinkNode.setAttribute('href', 'https://www.google.com/#q=' + encodeURIComponent(name));
+    nameLinkNode.appendChild(nameTextNode); // <a href="...">3D-Man</a>
+
+    nameTag.appendChild(nameLinkNode); // <character-name><a href="...">3D-man</a></character-name>
+
+    // Add different properties for a single character
+    characterContainer.appendChild(nameTag); // <character><character-name>3D-Man</character-name></character>
+    characterContainer.appendChild(img); // <character><character-name>3D-Man</character-name><img src="..." /></character>
+
+    // Add the character tag to the overall list of characters
+    var container = document.querySelector('characters'); // <characters><character><character-name>3D-Man</character-name><img src="..." /></character></characters>
+    container.appendChild(characterContainer); 
+
+
+  });
+
 });
 
