@@ -59,7 +59,7 @@ marvel('/characters').then(function(json) {
 
 
     if(imgPath !== 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-      container.appendChild(characterContainer);;
+      container.appendChild(characterContainer);
     }
     else{
       count++;
