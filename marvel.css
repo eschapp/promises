@@ -1,0 +1,30 @@
+a {
+  color: red;
+  text-decoration: none;
+}
+
+a:hover {
+  color: grey;
+  text-decoration: underline;
+  font-size: 40px;
+}
+
+character {
+  display: inline-block;
+  padding: 5px;
+}
+
+img {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  border: 5px darkblue solid;
+  }
+
+charName {
+  display: block;
+  text-align: center;
+  color: red;
+  text-decoration: bold;
+  font-size: 20px;
+}

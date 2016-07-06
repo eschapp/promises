@@ -23,11 +23,11 @@ function marvelFactory(config) {
 // Get an instance of the marvel api
 var marvel = marvelFactory({
   hostname: 'http://gateway.marvel.com',
-  publicKey: '05a3448298ed9a5694ebd41543a831cc',
-  privateKey: 'b99daadb62bcad353720f66de1dba592b0604ddf',
+  publicKey: 'c5ebb123335240358c2744cde0f38b7e',
+  privateKey: 'cff3343714de139da0173348487355979eda8406',
   version: '1'
 });
-
+///////////////////////////////////////////////////////////////////////////////////////////
 // 1. Sign up for the marvel api: https://developer.marvel.com
 // 2. Get your public and private key from: https://developer.marvel.com/account
 // 3. Replace the above config with your own public and private key
@@ -40,15 +40,37 @@ var marvel = marvelFactory({
 // 10.You can run a server with: `./node_modules/.bin/http-server`
 // 11.Once the server is running, you can see the code at:
 //       http://localhost:8080/marvel.html
-//
+///////////////////////////////////////////////////////////////////////////////////////////
 
-// Make a call using the api
-marvel('/characters').then(function(json) { 
+//  Make a call using the api
+marvel('/characters').then(function(json) {
   json.data.results.map(function(character){
+
+    var characterContainer = document.createElement('character');
+
+    var name = character.name;
+    var charNameTag = document.createElement('charName');
+    var charNameTagTextNode = document.createTextNode(name);
+    charNameTag.appendChild(charNameTagTextNode);
+
+    var charNameLinkNode = document.createElement('a');
+    charNameLinkNode.setAttribute('target', '_blank');
+    charNameLinkNode.setAttribute('href', 'https://www.google.com/#q=' + encodeURIComponent(name));
+    charNameLinkNode.appendChild(charNameTagTextNode);
+
+    charNameTag.appendChild(charNameLinkNode);
+
     var imgPath = character.thumbnail.path + '.' + character.thumbnail.extension;
     var img = document.createElement('img'); // Create an element node
     img.setAttribute('src', imgPath); // Set some properties on the node
-    document.querySelector('body').appendChild(img); // Attached the node to the document
-  }); 
+    img.setAttribute('title', name);
+
+    characterContainer.appendChild(charNameTag);
+    characterContainer.appendChild(img);
+
+    var container = document.querySelector('characters');
+    container.appendChild(characterContainer);
+
+  });
 });
 
