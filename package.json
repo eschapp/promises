@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "serve": "http-server",
+    "start": "npm run serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
