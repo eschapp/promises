@@ -9,11 +9,24 @@ function fetchJSON(url) {
   });
 }
 
+function optionsToString(options) {
+  var preppedOptions = {};
+  var preppedOptionsString = '';
+  for(opt in options) {
+    var prop = opt;
+    var value = options[prop];
+    preppedOptions[opt] = encodeURIComponent(options[opt]);
+    preppedOptionsString += prop + '=' + value + '&';
+  }
+  return preppedOptionsString;
+}
+
 function marvelFactory(config) {
-  return function(path) {
+  return function(path, options) {
+    var preppedOptions = optionsToString(options);
     var timestamp = new Date().getTime();
     var hash = CryptoJS.MD5(timestamp + config.privateKey + config.publicKey).toString();
-    var url = config.hostname + '/v' + config.version + '/public' + path + '?apikey=' + config.publicKey + '&ts=' + timestamp + '&hash=' + hash;
+    var url = config.hostname + '/v' + config.version + '/public' + path + '?' + preppedOptions + 'apikey=' + config.publicKey + '&ts=' + timestamp + '&hash=' + hash;
     console.log(url);
 
     return fetchJSON(url);
@@ -43,14 +56,92 @@ var marvel = marvelFactory({
 //
 
 // If I just use $, I'm just querying
-function $(selector) {
-  return document.querySelector(selector);
+function $(selector, context) {
+  return new $.fn.init(selector);
 }
 
-// If I use $.create, I'm creating
-$.create = function(elementName) {
-  return document.createElement(elementName);
-}
+$.fn = $.prototype = {
+};
+$.fn.init = function(selector, context) {
+
+  // null, '', undefined, false
+  if (!selector) {
+	  return this;
+	}
+  
+  // It is a string, so we have to guess
+  // what the user was trying to do
+  if(typeof selector === 'string') {
+    if(selector.charAt(0) === '<' && selector.charAt(selector.length-1) === '>' && selector.length >= 3) {
+     
+      //REGEX FOR SINGLE HTML TAGS
+      var rsingleTag = (/^<(\w+)\s*\/?>(?:<\/\1>|)$/);
+      
+      // REGEX TO GET TAG NAME FROM HTML STRINGS! 
+      var regex = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/; 
+      
+      // Locate single tags
+      var matchResult = rsingleTag.exec(selector);
+ 
+      if(matchResult && matchResult[1]) {
+
+        // new element
+        return {
+          el: document.createElement(matchResult[1]),
+          attr: function(prop, val) {
+            this.el.setAttribute(prop, val);
+          },
+          append: function(child) {
+            this.el.appendChild(child.el);
+          },
+          text: function(str) {
+            this.el.appendChild(document.createTextNode(str));
+          }
+        }
+        // return {
+        //   attr: function(val, props) {
+            
+        //     console.log(val, props);
+        //   },
+        //   el: function() {
+        //     return document.createElement(matchResult[1]);
+        //   }
+        // }
+      }
+    } else if (selector.charAt(0) === '#') {
+      return {
+        el: document.getElementById(selector),
+        attr: function(prop, val) {
+          this.el.setAttribute(prop, val);
+        },
+        append: function(child) {
+          this.el.appendChild(child.el);
+        },
+        text: function(str) {
+          this.el.appendChild(document.createTextNode(str));
+        }
+      }
+    } else {
+      return {
+        el: document.querySelector(selector),
+        attr: function(prop, val) {
+          this.el.setAttribute(prop, val);
+        },
+        append: function(child) {
+          this.el.appendChild(child.el);
+        },
+        text: function(str) {
+          this.el.appendChild(document.createTextNode(str));
+        }
+
+      }
+    }
+  }
+};
+// // If I use $.create, I'm creating
+// $.create = function(elementName) {
+//   return document.createElement(elementName);
+// }
 
 $.createText = function(text) {
   return document.createTextNode(text);
@@ -60,8 +151,9 @@ $.setAttribute = function(el, attr, value) { // this
   return el.setAttribute(attr, value);
 };
 
-$.appendChild = function(parentElement, childElement) {
-  return parentElement.appendChild(childElement);
+$.attr = function(childElement) {
+  console.trace(parentElement);
+  return this.appendChild(childElement);
 }
 
 function makeFilePath(path, extension) {
@@ -79,48 +171,55 @@ function marvelImageFound(path) {
 // characters.appendChild(character);
 
 // Make a call using the api
-marvel('/characters').then(function(json) {
+marvel('/characters', { limit: 100, offset: 300 }).then(function(json) {
 
   // Add the character tag to the overall list of characters
   var container = $('characters');
 
-  var noImageArray = json.data.results.filter(function(character){
+  var noImageArray = json.data.results.filter(function mapOverCharacters(character){
 
     // START HERE WITH BUILDING THE STRUCTURE
 
     // <character></character>
-    var characterContainer = $.create('character');
+    var characterContainer = $('<character />');
 
+    var overlay = $('<overlay />');
+    var slide = $('<slide />');
+    slide.text(character.name);
      // Any operations specific to this character
     var imgPath = makeFilePath(character.thumbnail.path, character.thumbnail.extension);
     var name = character.name;
 
-    var img = $.create('img'); // Create an element node
-    $.setAttribute(img, 'src', imgPath); // Set some properties on the node
+    var img = $('<img />'); // Create an element node
+    img.attr('src', imgPath); // Set some properties on the node
 
-    var nameTag = $.create('character-name'); // <character-name>
+    var nameTag = $('<charactername />'); // <character-name>
+    var nameWrapper = $('<namewrapper />');
+    //var nameTextNode = $.createText(name); // 3D-Man
+    nameWrapper.append(slide);
+    characterContainer.append(nameWrapper);
+    var nameTextNode = $
+    var nameLinkNode = $('<a />'); // <a>
 
-    var nameTextNode = $.createText(name); // 3D-Man
-    var nameLinkNode = $.create('a'); // <a>
-
-    $.setAttribute(nameLinkNode, 'href', 'https://www.google.com/#q=' + encodeURIComponent(name));
-    $.appendChild(nameLinkNode, nameTextNode); // <a href="...">3D-Man</a>
-
-    $.appendChild(nameTag, nameLinkNode); // <character-name><a href="...">3D-man</a></character-name>
+    nameLinkNode.attr('href', 'https://www.google.com/#q=' + encodeURIComponent(name));
+    //nameLinkNode.append(nameTextNode); // <a href="...">3D-Man</a>
+    console.dir(nameTag);
+    nameTag.append(nameLinkNode); // <character-name><a href="...">3D-man</a></character-name>
 
     // Add different properties for a single character
-    $.appendChild(characterContainer, nameTag); // <character><character-name>3D-Man</character-name></character>
-    $.appendChild(characterContainer, img); // <character><character-name>3D-Man</character-name><img src="..." /></character>
+    //characterContainer.append(nameTag); // <character><character-name>3D-Man</character-name></character>
+    characterContainer.append(overlay);
+    characterContainer.append(img); // <character><character-name>3D-Man</character-name><img src="..." /></character>
 
     var imgFound = marvelImageFound(imgPath);
     if(imgFound) {
-      $.appendChild(container, characterContainer);
+      container.append(characterContainer);
     }
     return !imgFound;
 
   });
   var charactersMetadata = $('characters-metadata');
-  var hiddenImagesTextNode = $.createText(noImageArray.length + ' characters were hidden.');
-  $.appendChild(charactersMetadata, hiddenImagesTextNode);
+  //var hiddenImagesTextNode = $.createText(noImageArray.length + ' characters were hidden.');
+  //charactersMetadata.append(hiddenImagesTextNode);
 });
 

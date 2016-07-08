@@ -1,13 +1,137 @@
+html {
+  overflow: hidden;
+  height: 100%;
+}
+body {
+  background: #333;
+  background-size: cover;
+  background: linear-gradient(to bottom right,#333,#999999);
+  margin: 0;
+  padding:0;
+  height:100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+hero {
+  color: whitesmoke;
+  font-family: 'Bangers', cursive;
+  font-size: 100px;
+  position: fixed;
+  z-index: 50;
+  bottom:0;
+  left: 50%;
+    text-shadow:
+   -10px -1px 0 #000,  
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
+}
+characters {
+  display:block;
+  width: 100%;
+  margin: 0 auto;
+  text-align:center;
+}
+
 character {
   display:inline-block;
+  margin-bottom: -4px;
+  height: 296px;
+  overflow:hidden;
+  transition: transform .2s ease-in-out;
 }
 
 character-name {
   display:block;
 }
 
-
 character > img {
-  max-width: 300px;
-  border-radius: 50%;
+  /*border-radius: 50%;*/
+  width: 300px;
+  height:300px;
+}
+
+character > overlay {
+    display:block;
+    position:relative;
+    margin-bottom: -300px;
+    width: 300px;
+    height: 300px;
+    background-size: cover;
+		background-image: linear-gradient(to bottom right,#002f4b,#dc4225);
+		opacity: 0.7; 
+    z-index:10;
+}
+
+character:hover, character:hover img {
+  transform: scale(1.2);
+  position: relative;
+  z-index: 40;
+  border-radius: 30px;
+  border: 1px solid #fff;
+  box-shadow: 0 0 20px 5px #000;
+}
+
+character:hover {
+  margin-bottom: -5px;
+  margin-top: -1px;
+  margin-left: -2px;
+  margin-right: -2px;
+}
+
+character:hover > overlay, character overlay:hover {
+    display:none;
+}
+
+@keyframes pulse_animation {
+	0% { transform: scale(1); }
+	30% { transform: scale(1); }
+	40% { transform: scale(1.08); }
+	50% { transform: scale(1); }
+	60% { transform: scale(1); }
+	70% { transform: scale(1.05); }
+	80% { transform: scale(1); }
+	100% { transform: scale(1); }
+}
+
+.pulse {
+	animation-name: pulse_animation;
+	animation-duration: 5000ms;
+	transform-origin:70% 70%;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+
+namewrapper {
+    position: relative;
+    display: block;
+    margin-bottom: -300px;
+    height: 300px;
+    text-align: left;
+    width: 300px;
+    z-index: 1000;
+    color: white;
+    overflow: hidden;
+}
+
+slide {
+    position: absolute;
+    left: 300px;
+    top: 200px;
+    width: 240px;
+    height: 300px;
+    transition: 0.2s;
+    color: white;
+    font-size: 40px;
+    font-family: 'Bangers';
+    opacity: 0.0;
+    padding: 30px;
+    text-shadow: -5px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+namewrapper:hover slide {
+    transition: 0.2s;
+    top: 20px;
+    opacity: 1.0;
+    left: 0;
 }
