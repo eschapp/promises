@@ -195,10 +195,8 @@ marvel('/characters', { limit: 100, offset: 300 }).then(function(json) {
 
     var nameTag = $('<charactername />'); // <character-name>
     var nameWrapper = $('<namewrapper />');
-    //var nameTextNode = $.createText(name); // 3D-Man
     nameWrapper.append(slide);
     characterContainer.append(nameWrapper);
-    var nameTextNode = $
     var nameLinkNode = $('<a />'); // <a>
 
     nameLinkNode.attr('href', 'https://www.google.com/#q=' + encodeURIComponent(name));
