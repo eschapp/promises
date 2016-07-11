@@ -1,9 +1,10 @@
 {
   "name": "promises",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
+    "serve": "http-server",
+    "start": "npm run serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +20,7 @@
   "homepage": "https://github.com/jimthedev/promises#readme",
   "devDependencies": {
     "http-server": "^0.9.0"
-  }
+  },
+  "dependencies": {},
+  "description": ""
 }

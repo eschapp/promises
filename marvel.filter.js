@@ -23,11 +23,11 @@ function marvelFactory(config) {
 // Get an instance of the marvel api
 var marvel = marvelFactory({
   hostname: 'http://gateway.marvel.com',
-  publicKey: 'c5ebb123335240358c2744cde0f38b7e',
-  privateKey: 'cff3343714de139da0173348487355979eda8406',
+  publicKey: '05a3448298ed9a5694ebd41543a831cc',
+  privateKey: 'b99daadb62bcad353720f66de1dba592b0604ddf',
   version: '1'
 });
-///////////////////////////////////////////////////////////////////////////////////////////
+
 // 1. Sign up for the marvel api: https://developer.marvel.com
 // 2. Get your public and private key from: https://developer.marvel.com/account
 // 3. Replace the above config with your own public and private key
@@ -40,29 +40,15 @@ var marvel = marvelFactory({
 // 10.You can run a server with: `./node_modules/.bin/http-server`
 // 11.Once the server is running, you can see the code at:
 //       http://localhost:8080/marvel.html
-///////////////////////////////////////////////////////////////////////////////////////////
+//
 
-//  Make a call using the api
+// Make a call using the api
 marvel('/characters').then(function(json) {
-  var count = 0;
-  json.data.results.map(function(character){
-<<<<<<< HEAD
 
-    var characterContainer = document.createElement('character');
+  // Add the character tag to the overall list of characters
+  var container = document.querySelector('characters');
 
-    var name = character.name;
-    var charNameTag = document.createElement('charName');
-    var charNameTagTextNode = document.createTextNode(name);
-    charNameTag.appendChild(charNameTagTextNode);
-
-    var charNameLinkNode = document.createElement('a');
-    charNameLinkNode.setAttribute('target', '_blank');
-    charNameLinkNode.setAttribute('href', 'https://www.google.com/#q=' + encodeURIComponent(name));
-    charNameLinkNode.appendChild(charNameTagTextNode);
-
-    charNameTag.appendChild(charNameLinkNode);
-
-=======
+  var noImageArray = json.data.results.filter(function(character){
     // DESIRED STRUCTURE:
     //
     // <characters>
@@ -86,27 +72,11 @@ marvel('/characters').then(function(json) {
     var characterContainer = document.createElement('character');
 
      // Any operations specific to this character
->>>>>>> upstream/master
     var imgPath = character.thumbnail.path + '.' + character.thumbnail.extension;
     var name = character.name;
 
     var img = document.createElement('img'); // Create an element node
     img.setAttribute('src', imgPath); // Set some properties on the node
-<<<<<<< HEAD
-    img.setAttribute('title', name);
-
-    characterContainer.appendChild(charNameTag);
-    characterContainer.appendChild(img);
-
-    var container = document.querySelector('characters');
-    container.appendChild(characterContainer);
-
-    if(imgPath === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-      count++;
-    }
-  });
-  console.log(count);
-=======
 
     var nameTag = document.createElement('character-name'); // <character-name>
 
@@ -121,13 +91,16 @@ marvel('/characters').then(function(json) {
     characterContainer.appendChild(nameTag); // <character><character-name>3D-Man</character-name></character>
     characterContainer.appendChild(img); // <character><character-name>3D-Man</character-name><img src="..." /></character>
 
-    // Add the character tag to the overall list of characters
-    var container = document.querySelector('characters'); // <characters><character><character-name>3D-Man</character-name><img src="..." /></character></characters>
-    container.appendChild(characterContainer); 
-
+    if(imgPath === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+      return true;
+    } else { // there is an image
+      container.appendChild(characterContainer);
+      return false;
+    }
 
   });
-
->>>>>>> upstream/master
+  var charactersMetadata = document.querySelector('characters-metadata');
+  var hiddenImagesTextNode = document.createTextNode(noImageArray.length + ' characters were hidden.');
+  charactersMetadata.appendChild(hiddenImagesTextNode);
 });
 
